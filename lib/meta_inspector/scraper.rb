@@ -11,7 +11,7 @@ require 'timeout'
 module MetaInspector
   class Scraper
     attr_reader :url, :scheme, :host, :root_url, :errors, :content_type, :timeout, :html_content_only
-    attr_reader :allow_redirections, :verbose
+    attr_reader :allow_redirections, :user_agent, :verbose
 
     # Initializes a new instance of MetaInspector, setting the URL to the one given
     # Options:
@@ -32,6 +32,7 @@ module MetaInspector
       @errors   = []
       @html_content_only  = options[:html_content_only]
       @allow_redirections = options[:allow_redirections]
+      @user_agent	  = options[:user_agent]
       @verbose            = options[:verbose]
       @document           = options[:document]
     end
@@ -166,7 +167,7 @@ module MetaInspector
 
     # Makes the request to the server
     def request
-      Timeout::timeout(timeout) { @request ||= open(url, {:allow_redirections => allow_redirections}) }
+      Timeout::timeout(timeout) { @request ||= open(url, {:allow_redirections => allow_redirections, 'User-Agent' => user_agent}) }
 
       rescue TimeoutError
         add_fatal_error 'Timeout!!!'
